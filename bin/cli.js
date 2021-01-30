@@ -32,7 +32,6 @@ switch (command) {
         fs.mkdtemp(path.join(os.tmpdir()), (err, folder) => {
             if (err) throw err
             watchConfig(webpackConfigGetter.getServerConfig(folder))
-            // Prints: /tmp/foo-itXde2
         })
         break
     }
