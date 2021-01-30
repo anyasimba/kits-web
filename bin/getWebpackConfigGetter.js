@@ -14,8 +14,8 @@ module.exports = (mode, cwd, globalPackages) => {
     globalPackages.forEach(
         package =>
             (resolve.fallback[package] = path.resolve(
-                execSync('yarn global dir').toString().trim(),
-                `node_modules/${package}`
+                execSync('npm root -g').toString().trim(),
+                package
             ))
     )
 
