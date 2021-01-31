@@ -34,7 +34,7 @@ module.exports = (mode, cwd, globalPackages) => {
             include: [/src/, /extras/],
         },
         {
-            test: /\.scss$/,
+            test: /\.css$/,
             use: ['cache-loader', 'style-loader', 'css-loader?modules'],
             include: [/src/, /extras/],
         },
