@@ -1,6 +1,6 @@
-import * as _ from './underscore'
-Object.assign(global, _)
+import * as _underscore from './underscore'
+Object.assign(global, _underscore)
 
 declare global {
-    const _: typeof _
+    const _: typeof _underscore._
 }

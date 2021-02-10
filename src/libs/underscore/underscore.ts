@@ -1,1 +1,1 @@
-export { default as abc } from 'underscore'
+export { default as _ } from 'underscore'
