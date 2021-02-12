@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "license": "ISC",
-  "scripts": {},
+  "scripts": {
+    "test": "test"
+  },
   "bin": {
     "web": "bin/cli.js"
   },
@@ -15,6 +17,7 @@
     "@types/react-dom": "^17.0.0",
     "@types/react-router": "^5.1.11",
     "@types/react-router-dom": "^5.1.7",
+    "@types/styled-components": "^5.1.7",
     "@types/underscore": "^1.10.24",
     "@typescript-eslint/eslint-plugin": "^4.14.1",
     "@typescript-eslint/parser": "^4.14.1",
@@ -39,7 +42,6 @@
   },
   "dependencies": {
     "@ant-design/icons": "^4.4.0",
-    "@emotion/styled": "^11.1.5",
     "antd": "^4.11.2",
     "cookie-parser": "^1.4.5",
     "express": "^4.17.1",
@@ -52,6 +54,7 @@
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-use": "^15.3.8",
+    "styled-components": "^5.2.1",
     "underscore": "^1.12.0"
   }
 }

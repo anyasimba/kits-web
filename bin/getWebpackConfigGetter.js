@@ -4,7 +4,7 @@ const { execSync } = require('child_process')
 const webpack = require('webpack')
 const NodemonPlugin = require('nodemon-webpack-plugin')
 
-module.exports = (mode, cwd, globalPackages) => {
+module.exports = ({ mode, cwd, port = 3019 }, globalPackages) => {
     const resolve = {
         fallback: {},
         extensions: ['.ts', '.tsx', '.js'],
@@ -41,12 +41,16 @@ module.exports = (mode, cwd, globalPackages) => {
     ]
 
     function getClientConfig() {
+        const definePlugin = new webpack.DefinePlugin({
+            CWD: JSON.stringify(cwd),
+        })
+
         return {
             stats: 'minimal',
             mode,
             entry: {
                 app: [
-                    'webpack-hot-middleware/client?path=http://localhost/__webpack_hmr',
+                    'webpack-hot-middleware/client?path=http://localhost:8080/__webpack_hmr',
                     './src',
                     './extras/client',
                 ],
@@ -57,14 +61,19 @@ module.exports = (mode, cwd, globalPackages) => {
             target: 'web',
             output: {
                 filename: 'app.js',
-                path: path.resolve(cwd, 'dist'),
+                path: path.resolve(cwd, 'build'),
             },
-            plugins: [new webpack.HotModuleReplacementPlugin()],
+            plugins: [definePlugin, new webpack.HotModuleReplacementPlugin()],
             devtool: 'source-map',
         }
     }
 
     function getServerConfig(outputDir) {
+        const definePlugin = new webpack.DefinePlugin({
+            CWD: JSON.stringify(cwd),
+            PORT: port,
+        })
+
         return {
             stats: 'minimal',
             mode,
@@ -94,6 +103,7 @@ module.exports = (mode, cwd, globalPackages) => {
                 path: outputDir,
             },
             plugins: [
+                definePlugin,
                 new NodemonPlugin({
                     env: {
                         NODE_PATH: path.resolve(__dirname, '../node_modules'),

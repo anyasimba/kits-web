@@ -1,11 +1,19 @@
 /* eslint-disable no-unused-vars */
 import { Request, Response } from 'express'
+import './src/libs/react'
 import './src'
 
 declare global {
     interface Route {
         path: string
         exact?: boolean
+    }
+
+    function pages(path: string): void
+
+    // webpack
+    interface NodeRequire {
+        context(directory: string, useSubdirectories?: boolean, regExp?: RegExp, mode?: string): any
     }
 
     // client

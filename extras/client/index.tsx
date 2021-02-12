@@ -1,6 +1,20 @@
 import { hydrate } from 'react-dom'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
-import routes from '../routes'
+import { getRoutes } from '../shared'
+
+declare const CWD: string
+declare const global: any
+global.pages(require.context(`${CWD}/src/pages`, true))
+
+const pages: any = {}
+global.pageResult.forEach((fn: () => any) => {
+    const result = fn()
+    Object.keys(result).forEach((key: string) => {
+        pages[key] = result[key]
+    })
+})
+
+const routes = getRoutes(pages)
 
 hydrate(
     <BrowserRouter>

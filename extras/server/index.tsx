@@ -3,22 +3,42 @@ import express from 'express'
 import CookieParser from 'cookie-parser'
 import { renderToString } from 'react-dom/server'
 import { Route, StaticRouter, Switch } from 'react-router'
-import * as pages from 'pages/@server'
-import routes, { RouteInfo } from '../routes'
+import { getRoutes, RouteInfo } from '../shared'
 
-const port = 3000
+declare const CWD: string
+const PORT = 3019
+declare const global: any
+global.pages(require.context(`${CWD}/src/pages`, true))
+
+const pages: any = {}
+global.pageResult.forEach((fn: () => any) => {
+    const result = fn()
+    Object.keys(result).forEach((key: string) => {
+        pages[key] = result[key]
+    })
+})
+
+const serverPages: any = {}
+global.serverResult.forEach((fn: () => any) => {
+    const result = fn()
+    Object.keys(result).forEach((key: string) => {
+        serverPages[key] = result[key]
+    })
+})
+
+const routes = getRoutes(pages)
 
 const server = express()
 server.use(CookieParser())
 
-const scripts: Array<string> = ['http://localhost/app.js']
+const scripts: Array<string> = ['http://localhost:8080/app.js']
 
 const tags = ['Api', 'Middlewares']
 
 const pageInfoGetters: any = {}
-Object.keys(pages)
+Object.keys(serverPages)
     .filter(key => tags.every(tag => !key.endsWith(tag)))
-    .forEach(key => (pageInfoGetters[key] = pages[key as keyof typeof pages]))
+    .forEach(key => (pageInfoGetters[key] = serverPages[key]))
 
 server.get('/api/*', (req, res) => {
     const route = getRoute(req.url.slice(4))
@@ -60,7 +80,7 @@ server.get('*', (req, res) => {
 })
 
 // eslint-disable-next-line no-console
-server.listen(port, () => console.log(`Listening on port ${port}`))
+server.listen(PORT, () => console.log(`Listening on port ${PORT}`))
 
 const getRoute = (url: string) => {
     return (
@@ -75,7 +95,7 @@ const runMiddlewares = async (
     res: ServerResponse,
     cb: () => void
 ) => {
-    const middlewares = pages[`${route.componentName}Middlewares` as keyof typeof pages]
+    const middlewares = serverPages[`${route.componentName}Middlewares`]
 
     const runMiddleware = async (i: number) => {
         const middleware = middlewares[i]

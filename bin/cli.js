@@ -8,9 +8,9 @@ const express = require('express')
 const getWebpackConfigGetter = require('./getWebpackConfigGetter')
 
 const globalPackages = ['web']
-const [command, mode] = getArgs()
+const [command, mode, port] = getArgs()
 const cwd = process.cwd()
-const webpackConfigGetter = getWebpackConfigGetter(mode, cwd, globalPackages)
+const webpackConfigGetter = getWebpackConfigGetter({ mode, cwd, port }, globalPackages)
 
 switch (command) {
     case 'start': {
@@ -27,7 +27,7 @@ switch (command) {
             })
         )
         app.use(require('webpack-hot-middleware')(compiler))
-        app.listen(80)
+        app.listen(8080)
 
         fs.mkdtemp(path.join(os.tmpdir()), (err, folder) => {
             if (err) throw err
@@ -47,6 +47,8 @@ function getArgs() {
     let command = process.argv[2]
     let setMode = false
     let mode
+    let setPort = false
+    let port
     process.argv.slice(3).forEach(arg => {
         if (setMode) {
             setMode = false
@@ -57,8 +59,18 @@ function getArgs() {
             setMode = true
             return
         }
+
+        if (setPort) {
+            setPort = false
+            port = arg
+            return
+        }
+        if (arg === '--port') {
+            setPort = true
+            return
+        }
     })
-    return [command, mode]
+    return [command, mode, port]
 }
 
 function watchConfig(config) {
